@@ -18,8 +18,9 @@ def prepared_data(data_frame):
     imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
     numerical_features_without_nan = imp.fit_transform(numerical_features)
     numerical_features_scaled = preprocessing.scale(numerical_features_without_nan)
+    numerical_features_normalized = preprocessing.normalize(numerical_features_scaled, norm='l2')
 
-    return np.concatenate((numerical_features_scaled, categorical_features_encoded), axis= 1)
+    return np.concatenate((numerical_features_normalized, categorical_features_encoded), axis= 1)
 
 trainData = pd.read_csv("train.csv")
 Y_train = trainData['Survived']

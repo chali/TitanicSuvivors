@@ -4,6 +4,7 @@ import csv as csv
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import Imputer
+from sklearn import preprocessing
 
 def prepared_data(data_frame):
     numerical_feature_names = ['Age', 'SibSp', 'Parch', 'Fare']
@@ -16,8 +17,9 @@ def prepared_data(data_frame):
     numerical_features = data_frame[numerical_feature_names].as_matrix().astype(np.float)
     imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
     numerical_features_without_nan = imp.fit_transform(numerical_features)
+    numerical_features_scaled = preprocessing.scale(numerical_features_without_nan)
 
-    return np.concatenate((numerical_features_without_nan, categorical_features_encoded), axis= 1)
+    return np.concatenate((numerical_features_scaled, categorical_features_encoded), axis= 1)
 
 trainData = pd.read_csv("train.csv")
 Y_train = trainData['Survived']

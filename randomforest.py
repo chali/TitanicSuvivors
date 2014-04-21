@@ -8,7 +8,8 @@ from sklearn import preprocessing
 
 def prepared_data(data_frame):
     numerical_feature_names = ['Age', 'SibSp', 'Parch', 'Fare']
-    categorical_feature_names = ['Embarked', 'Pclass', 'Sex']
+    categorical_feature_names = ['Embarked', 'Pclass']
+    sex_feature = np.asmatrix(data_frame['Sex'] == 'male').T.astype(np.float)
 
     categorical_features = data_frame[categorical_feature_names]
     encoder = DictVectorizer(sparse=False)
@@ -20,7 +21,7 @@ def prepared_data(data_frame):
     numerical_features_scaled = preprocessing.scale(numerical_features_without_nan)
     numerical_features_normalized = preprocessing.normalize(numerical_features_scaled, norm='l2')
 
-    return np.concatenate((numerical_features_normalized, categorical_features_encoded), axis= 1)
+    return np.concatenate((numerical_features_normalized, categorical_features_encoded, sex_feature), axis= 1)
 
 trainData = pd.read_csv("train.csv")
 Y_train = trainData['Survived']

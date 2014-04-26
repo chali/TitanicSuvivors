@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import csv as csv
+from sklearn import cross_validation
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import Imputer
@@ -23,16 +24,19 @@ def prepared_data(data_frame):
 
     return np.concatenate((numerical_features_normalized, categorical_features_encoded, sex_feature), axis= 1)
 
-trainData = pd.read_csv("train.csv")
-Y_train = trainData['Survived']
-X_train = prepared_data(trainData)
+data = pd.read_csv("train.csv")
+Y_data = data['Survived'].as_matrix().astype(np.int)
+X_data = prepared_data(data)
 
-forest = RandomForestClassifier(n_estimators=100)
-forest = forest.fit(X_train, Y_train.as_matrix())
+X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X_data, Y_data, test_size=0.3, random_state=0)
+
+cls = RandomForestClassifier(n_estimators=100)
+cls = cls.fit(X_train, Y_train)
+print('Accuracy: ' + cls.score(X_test, Y_test).astype('str'))
 
 testData = pd.read_csv("test.csv")
 X_test = prepared_data(testData)
-Y_pred = forest.predict(X_test)
+Y_pred = cls.predict(X_test)
 
 ids = testData['PassengerId']
 output_file = open("prediction.csv", "wb")
